@@ -1,10 +1,13 @@
-﻿using System;
-using Smod2;
+﻿using Smod2;
 using Smod2.API;
 using Smod2.Attributes;
-using System.IO;
+using Smod2.Config;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
+using SMRoleType = Smod2.API.RoleType;
 // TO DO:
 
 // ¯\_(ツ)_/¯
@@ -18,7 +21,7 @@ namespace CustomAnnouncements
 	id = "cyan.custom.announcements",
 	version = "1.7",
 	SmodMajor = 3,
-	SmodMinor = 0,
+	SmodMinor = 7,
 	SmodRevision = 0
 	)]
 	public class CustomAnnouncements : Plugin
@@ -103,54 +106,52 @@ namespace CustomAnnouncements
 				using (new StreamWriter(File.Create(WarheadAutoStartFilePath))) { }
 			}
 		}
-		
-        public override void Register()
-        {
+
+		public override void Register()
+		{
 			plugin = this;
 
 			// Event handlers
 			AddEventHandlers(new RoundEventHandler(this));
 
 			// Config settings
-			AddConfig(new Smod2.Config.ConfigSetting("ca_all_whitelist", new string[] {}, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use all commands. This will override all other whitelists."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_countdown_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the countdown command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_text_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the text command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_mtf_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the mtf command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_scp_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the scp command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_preset_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the preset command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_timer_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the timer command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_chaosspawn_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the chaosspawn command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_roundstart_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the roundstart command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_roundend_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the roundend command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_player_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the player command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_waitingforplayers_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the waitingforplayers command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_playerescape_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the playerescape command."));
-			AddConfig(new Smod2.Config.ConfigSetting("ca_autowarhead_whitelist", new string[] { "owner", "admin" }, Smod2.Config.SettingType.LIST, true, "Defines what ranks are allowed to use the autowarhead command."));
+			var defaultCommandPermissionRoles = new[] { "owner", "admin" };
+			AddConfig(new ConfigSetting("ca_all_whitelist", Array.Empty<string>(), true, "Defines what ranks are allowed to use all commands. This will override all other whitelists."));
+			AddConfig(new ConfigSetting("ca_countdown_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the countdown command."));
+			AddConfig(new ConfigSetting("ca_text_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the text command."));
+			AddConfig(new ConfigSetting("ca_mtf_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the mtf command."));
+			AddConfig(new ConfigSetting("ca_scp_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the scp command."));
+			AddConfig(new ConfigSetting("ca_preset_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the preset command."));
+			AddConfig(new ConfigSetting("ca_timer_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the timer command."));
+			AddConfig(new ConfigSetting("ca_chaosspawn_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the chaosspawn command."));
+			AddConfig(new ConfigSetting("ca_roundstart_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the roundstart command."));
+			AddConfig(new ConfigSetting("ca_roundend_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the roundend command."));
+			AddConfig(new ConfigSetting("ca_player_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the player command."));
+			AddConfig(new ConfigSetting("ca_waitingforplayers_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the waitingforplayers command."));
+			AddConfig(new ConfigSetting("ca_playerescape_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the playerescape command."));
+			AddConfig(new ConfigSetting("ca_autowarhead_whitelist", defaultCommandPermissionRoles, true, "Defines what ranks are allowed to use the autowarhead command."));
 
 			// Commands
-			AddCommands(new string[] { "customannouncements", "ca" }, new CommandsOutput());
-			AddCommands(new string[] { "countdown", "cd" }, new CountdownCommand(this));
-			AddCommands(new string[] { "textannouncement", "ta" }, new CustomTextCommand(this));
-			AddCommands(new string[] { "mtfannouncement", "mtfa" }, new MTFAnnouncementCommand(this));
-			AddCommands(new string[] { "scpannouncement", "scpa" }, new SCPEliminationCommand(this));
-			AddCommands(new string[] { "preset", "pr" }, new PresetCommand(this));
-			AddCommands(new string[] { "timer", "ti" }, new TimerCommand(this));
-			AddCommands(new string[] { "chaosspawn", "chs" }, new ChaosSpawnCommand(this));
-			AddCommands(new string[] { "roundstart", "rs" }, new RoundStartCommand(this));
-			AddCommands(new string[] { "roundend", "re" }, new RoundEndCommand(this));
-			AddCommands(new string[] { "playerannouncement", "pa" }, new PlayerAnnouncementCommand(this));
-			AddCommands(new string[] { "waitingforplayers", "wp" }, new WaitingForPlayersCommand(this));
-			AddCommands(new string[] { "playerescape", "pe" }, new PlayerEscapeCommand(this));
-			AddCommands(new string[] { "autowarhead", "aw" }, new AutoWarheadCommand(this));
+			AddCommands(new[] { "customannouncements", "ca" }, new CommandsOutput());
+			AddCommands(new[] { "countdown", "cd" }, new CountdownCommand(this));
+			AddCommands(new[] { "textannouncement", "ta" }, new CustomTextCommand(this));
+			AddCommands(new[] { "mtfannouncement", "mtfa" }, new MTFAnnouncementCommand(this));
+			AddCommands(new[] { "scpannouncement", "scpa" }, new SCPEliminationCommand(this));
+			AddCommands(new[] { "preset", "pr" }, new PresetCommand(this));
+			AddCommands(new[] { "timer", "ti" }, new TimerCommand(this));
+			AddCommands(new[] { "chaosspawn", "chs" }, new ChaosSpawnCommand(this));
+			AddCommands(new[] { "roundstart", "rs" }, new RoundStartCommand(this));
+			AddCommands(new[] { "roundend", "re" }, new RoundEndCommand(this));
+			AddCommands(new[] { "playerannouncement", "pa" }, new PlayerAnnouncementCommand(this));
+			AddCommands(new[] { "waitingforplayers", "wp" }, new WaitingForPlayersCommand(this));
+			AddCommands(new[] { "playerescape", "pe" }, new PlayerEscapeCommand(this));
+			AddCommands(new[] { "autowarhead", "aw" }, new AutoWarheadCommand(this));
 		}
 
-		public static int CountRoles(Role role)
+		public static int CountRoles(SMRoleType role)
 		{
-			int count = 0;
-			foreach (Player pl in PluginManager.Manager.Server.GetPlayers())
-				if (pl.TeamRole.Role == role)
-					count++;
-			return count;
+			var baseGameClass = (RoleType)role;
+			return ReferenceHub.GetAllHubs().Count(rh => rh.Value.characterClassManager.CurClass == baseGameClass);
 		}
 
 		public static bool IsPlayerWhitelisted(Player player, string[] whitelist)
@@ -158,7 +159,7 @@ namespace CustomAnnouncements
 			foreach (string rank in whitelist)
 			{
 				plugin.Info(rank + "=" + player.GetRankName().ToLower());
-				if (player.GetRankName().ToLower() == rank.ToLower())
+				if (string.Equals(player.GetRankName(), rank, StringComparison.OrdinalIgnoreCase))
 				{
 					return true;
 				}
@@ -169,19 +170,14 @@ namespace CustomAnnouncements
 		public static string[] SetWhitelist(string whitelistName)
 		{
 			string[] allWhitelist = plugin.GetConfigList("ca_all_whitelist");
-			string[] whitelist;
-			if (allWhitelist.Length > 0)
-				whitelist = allWhitelist;
-			else
-				whitelist = plugin.GetConfigList(whitelistName);
-			return whitelist;
+			return allWhitelist.Length > 0 ? allWhitelist : plugin.GetConfigList(whitelistName);
 		}
 
 		public static bool IsVoiceLine(string str)
 		{
 			foreach (NineTailedFoxAnnouncer.VoiceLine vl in ann.voiceLines)
 			{
-				if (vl.apiName.ToUpper() == str.ToUpper())
+				if (string.Equals(vl.apiName, str, StringComparison.OrdinalIgnoreCase))
 					return true;
 			}
 			return false;
@@ -192,7 +188,7 @@ namespace CustomAnnouncements
 			foreach (string str in text)
 			{
 				string word = str;
-				if (word == string.Empty) continue;
+				if (word?.Length == 0) continue;
 				if (word.IndexOf(".") != -1)
 				{
 					word = word.Replace(" .", "");
@@ -229,7 +225,7 @@ namespace CustomAnnouncements
 			{
 				foreach (string str in currentText)
 				{
-					if (str.Split(':')[0].ToLower() == key.ToLower())
+					if (string.Equals(str.Split(':')[0], key, StringComparison.OrdinalIgnoreCase))
 					{
 						return true;
 					}
@@ -245,7 +241,7 @@ namespace CustomAnnouncements
 			{
 				foreach (string str in keys)
 				{
-					if (str.Split(':')[0].ToLower() == key.ToLower())
+					if (string.Equals(str.Split(':')[0], key, StringComparison.OrdinalIgnoreCase))
 					{
 						return str.Substring(str.IndexOf(':') + 2);
 					}
@@ -256,8 +252,6 @@ namespace CustomAnnouncements
 
 		public static int AddLineToFile(string filePath, string key, string value)
 		{
-			string[] currentText = File.ReadAllLines(filePath);
-
 			if (DoesKeyExistInFile(filePath, key))
 			{
 				return -1;
@@ -298,7 +292,7 @@ namespace CustomAnnouncements
 		public static string ReplaceVariables(string input)
 		{
 			RoundStats stats = PluginManager.Manager.Server.Round.Stats;
-			int minutes = (int)(PluginManager.Manager.Server.Round.Duration / 60), duration = PluginManager.Manager.Server.Round.Duration;
+			int minutes = PluginManager.Manager.Server.Round.Duration / 60, duration = PluginManager.Manager.Server.Round.Duration;
 
 			input = input.Replace("$scp_alive", stats.SCPAlive.ToString());
 			input = input.Replace("$scp_start", stats.SCPStart.ToString());
@@ -314,19 +308,16 @@ namespace CustomAnnouncements
 			input = input.Replace("$grenade_kills", stats.GrenadeKills.ToString());
 			input = input.Replace("$mtf_alive", stats.NTFAlive.ToString());
 			input = input.Replace("$ci_alive", stats.CiAlive.ToString());
-			input = input.Replace("$tutorial_alive", CountRoles(Role.TUTORIAL).ToString());
+			input = input.Replace("$tutorial_alive", CountRoles(SMRoleType.TUTORIAL).ToString());
 			input = input.Replace("$round_duration", (duration < 60) ? duration + ((duration == 1) ? " second" : " seconds") : minutes + ((minutes == 1) ? " minute" : " minutes") + " and " + (duration - (minutes * 60)) + ((duration - (minutes * 60) == 1) ? " second" : " seconds"));
 
 			string[] words = input.Split(' ');
 
 			for (int i = 0; i < words.Length; i++)
-			{ 
-				if (Int32.TryParse(words[i], out int a))
+			{
+				if (Int32.TryParse(words[i], out int a) && a > 20)
 				{
-					if (a > 20)
-					{
-						words[i] = ann.ConvertNumber(a).ToString();
-					}
+					words[i] = ann.ConvertNumber(a);
 				}
 			}
 
@@ -412,7 +403,7 @@ namespace CustomAnnouncements
 			string str1 = args.ToLower();
 			foreach (Player pl in PluginManager.Manager.Server.GetPlayers(str1))
 			{
-				if (!pl.Name.ToLower().Contains(args.ToLower())) { goto NoPlayer; }
+				if (pl.Name.IndexOf(args, StringComparison.OrdinalIgnoreCase) < 0) { goto NoPlayer; }
 				if (str1.Length < maxNameLength)
 				{
 					int x = maxNameLength - str1.Length;
@@ -442,14 +433,11 @@ namespace CustomAnnouncements
 		public static float CalculateDuration(string tts)
 		{
 			float num = 0f;
-			string[] array = tts.Split(new char[]{' '});
-			string[] array2 = array;
-			foreach (string text in array2)
+			foreach (string text in tts.Split(' '))
 			{
-				NineTailedFoxAnnouncer.VoiceLine[] array4 = ann.voiceLines;
-				foreach (NineTailedFoxAnnouncer.VoiceLine voiceLine in array4)
+				foreach (NineTailedFoxAnnouncer.VoiceLine voiceLine in ann.voiceLines)
 				{
-					if (text.ToUpper() == voiceLine.apiName.ToUpper())
+					if (string.Equals(text, voiceLine.apiName, StringComparison.OrdinalIgnoreCase))
 					{
 						num += voiceLine.length;
 					}

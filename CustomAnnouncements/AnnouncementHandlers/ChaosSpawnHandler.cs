@@ -1,5 +1,5 @@
-﻿using System.Threading;
-using Smod2;
+﻿using Smod2;
+using System.Threading;
 
 namespace CustomAnnouncements
 {
@@ -9,7 +9,7 @@ namespace CustomAnnouncements
 		{
 			Thread.Sleep(50);
 			string text = CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(CustomAnnouncements.StringArrayToString(message, 0)));
-			plugin.pluginManager.Server.Map.AnnounceCustomMessage(text);
+			PluginManager.Manager.Server.Map.AnnounceCustomMessage(text);
 		}
 	}
 }

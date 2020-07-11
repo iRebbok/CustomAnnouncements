@@ -27,7 +27,7 @@ namespace CustomAnnouncements
 			if (message.Length > 0)
 			{
 				string text = CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(CustomAnnouncements.StringArrayToString(message, 0)));
-				plugin.pluginManager.Server.Map.AnnounceCustomMessage(text);
+				PluginManager.Manager.Server.Map.AnnounceCustomMessage(text);
 				plugin.Info("Running round start announcement...");
 			}
 		}
@@ -40,7 +40,7 @@ namespace CustomAnnouncements
 			if (message.Length > 0)
 			{
 				string text = CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(CustomAnnouncements.StringArrayToString(message, 0)));
-				plugin.pluginManager.Server.Map.AnnounceCustomMessage(text);
+				PluginManager.Manager.Server.Map.AnnounceCustomMessage(text);
 				plugin.Info("Running round end announcement...");
 			}
 		}
@@ -63,9 +63,9 @@ namespace CustomAnnouncements
 		{
 			if (File.ReadAllLines(CustomAnnouncements.PlayerJoinFilePath).Length > 0)
 			{
-				if (CustomAnnouncements.DoesKeyExistInFile(CustomAnnouncements.PlayerJoinFilePath, ev.Player.SteamId))
+				if (CustomAnnouncements.DoesKeyExistInFile(CustomAnnouncements.PlayerJoinFilePath, ev.Player.UserId))
 				{
-					plugin.pluginManager.Server.Map.AnnounceCustomMessage(CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(CustomAnnouncements.GetValueOfKey(CustomAnnouncements.PlayerJoinFilePath, ev.Player.SteamId.ToString()))));
+					PluginManager.Manager.Server.Map.AnnounceCustomMessage(CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(CustomAnnouncements.GetValueOfKey(CustomAnnouncements.PlayerJoinFilePath, ev.Player.UserId))));
 					plugin.Info("Running player join announcement for player: " + ev.Player.Name);
 				}
 			}
@@ -91,7 +91,7 @@ namespace CustomAnnouncements
 				if (!isPlaying)
 				{
 					string str = CustomAnnouncements.StringArrayToString(message, 0).Replace("$escape_class", RoleConversions.RoleConversionDict[ev.Player.TeamRole.Role]);
-					plugin.pluginManager.Server.Map.AnnounceCustomMessage(CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(str)));
+					PluginManager.Manager.Server.Map.AnnounceCustomMessage(CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(str)));
 					plugin.Info("Running player escape announcement...");
 					Thread WaitingForPlayersHandler = new Thread(new ThreadStart(() => new PlayerEscapeHandler(str)));
 					WaitingForPlayersHandler.Start();
@@ -106,7 +106,7 @@ namespace CustomAnnouncements
 				string[] message = File.ReadAllLines(CustomAnnouncements.WarheadAutoStartFilePath);
 				if (message.Length > 0)
 				{
-					plugin.pluginManager.Server.Map.AnnounceCustomMessage(CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(CustomAnnouncements.StringArrayToString(message, 0))));
+					PluginManager.Manager.Server.Map.AnnounceCustomMessage(CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(CustomAnnouncements.StringArrayToString(message, 0))));
 					plugin.Info("Running auto warhead announcement...");
 				}
 			}

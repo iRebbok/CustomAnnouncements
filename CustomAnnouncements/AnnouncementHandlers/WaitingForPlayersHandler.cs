@@ -12,7 +12,7 @@ namespace CustomAnnouncements
 			{
 				if (plugin.Server.GetPlayers().Count > 0)
 				{
-					plugin.pluginManager.Server.Map.AnnounceCustomMessage(text);
+					PluginManager.Manager.Server.Map.AnnounceCustomMessage(text);
 					plugin.Info("Running waiting for players announcement...");
 					playedAnnouncement = true;
 				}

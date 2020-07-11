@@ -1,5 +1,5 @@
-﻿using System;
-using Smod2;
+﻿using Smod2;
+using System;
 using System.IO;
 using System.Threading;
 
@@ -17,10 +17,10 @@ namespace CustomAnnouncements
 				{
 					if (timer.Length > 0)
 					{
-						if (plugin.pluginManager.Server.Round.Duration == Int32.Parse(timer.Split(':')[0]))
+						if (PluginManager.Manager.Server.Round.Duration == Int32.Parse(timer.Split(':')[0]))
 						{
 							string message = timer.Split(':')[1].Substring(1);
-							plugin.pluginManager.Server.Map.AnnounceCustomMessage(CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(message)));
+							PluginManager.Manager.Server.Map.AnnounceCustomMessage(CustomAnnouncements.ReplaceVariables(CustomAnnouncements.SpacePeriods(message)));
 							plugin.Info("Running timer announcement...");
 						}
 					}

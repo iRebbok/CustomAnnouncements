@@ -1,16 +1,14 @@
-﻿using System;
-using Smod2;
-using Smod2.Commands;
+﻿using Smod2;
 using Smod2.API;
-using System.IO;
-using System.Collections.Generic;
+using Smod2.Commands;
+using System;
 
 namespace CustomAnnouncements
 {
 	class PlayerAnnouncementCommand : ICommandHandler
 	{
-		private Announcement an;
-		private Plugin plugin;
+		private readonly Announcement an;
+		private readonly Plugin plugin;
 
 		public PlayerAnnouncementCommand(Plugin plugin)
 		{
@@ -36,7 +34,7 @@ namespace CustomAnnouncements
 
 			if (args.Length > 0)
 			{
-				if (args[0].ToLower() == "save")
+				if (string.Equals(args[0], "save", StringComparison.OrdinalIgnoreCase))
 				{
 					if (args.Length > 2)
 					{
@@ -45,7 +43,7 @@ namespace CustomAnnouncements
 						if (cPlayer != null)
 						{
 							name = cPlayer.Name;
-							id = cPlayer.SteamId;
+							id = cPlayer.UserId;
 						}
 						else if (ulong.TryParse(args[1], out ulong a))
 						{
@@ -60,18 +58,18 @@ namespace CustomAnnouncements
 						return an.SetVariable(id, CustomAnnouncements.StringArrayToString(args, 2), "Error: Player already exists.", "Saved announcement for player \"" + name + "\".");
 					}
 				}
-				else if (args[0].ToLower() == "remove")
+				else if (string.Equals(args[0], "remove", StringComparison.OrdinalIgnoreCase))
 				{
 					if (args.Length > 1)
 					{
 						string name = "", id = "";
-						if (args[1].ToLower() != "all" && args[1] != "*")
+						if (!string.Equals(args[1], "all", StringComparison.OrdinalIgnoreCase) && args[1] != "*")
 						{
 							Player cPlayer = CustomAnnouncements.GetPlayer(args[1], out cPlayer);
 							if (cPlayer != null)
 							{
 								name = cPlayer.Name;
-								id = cPlayer.SteamId;
+								id = cPlayer.UserId;
 							}
 							else if (ulong.TryParse(args[1], out ulong a))
 							{
@@ -87,7 +85,7 @@ namespace CustomAnnouncements
 						return an.RemoveVariable(id, "Error: there are no player announcements.", "Error: couldn't find player \"" + name + "\".", "Removed all player announcements.", "Removed player \"" + name + "\".");
 					}
 				}
-				else if (args[0].ToLower() == "list")
+				else if (string.Equals(args[0], "list", StringComparison.OrdinalIgnoreCase))
 				{
 					return an.ListVariables("Error: there are no player announcements.");
 				}

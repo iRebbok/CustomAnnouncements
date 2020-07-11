@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
-using Smod2.API;
+
+using SMRoleType = Smod2.API.RoleType;
 
 namespace CustomAnnouncements
 {
-	class RoleConversions
+	static class RoleConversions
 	{
-		public static Dictionary<Role, string> RoleConversionDict = new Dictionary<Role, string>()
+		public static readonly Dictionary<SMRoleType, string> RoleConversionDict = new Dictionary<SMRoleType, string>()
 		{
-			{ Role.CHAOS_INSURGENCY, "chaosinsurgency" },
-			{ Role.CLASSD, "classd" },
-			{ Role.FACILITY_GUARD, "facility guard" },
-			{ Role.NTF_CADET, "ninetailedfox" },
-			{ Role.NTF_COMMANDER, "ninetailedfox" },
-			{ Role.NTF_LIEUTENANT, "ninetailedfox" },
-			{ Role.NTF_SCIENTIST, "ninetailedfox" },
-			{ Role.SCIENTIST, "scientist" },
+			{ SMRoleType.CHAOS_INSURGENCY, "chaosinsurgency" },
+			{ SMRoleType.CLASSD, "classd" },
+			{ SMRoleType.FACILITY_GUARD, "facility guard" },
+			{ SMRoleType.NTF_CADET, "ninetailedfox" },
+			{ SMRoleType.NTF_COMMANDER, "ninetailedfox" },
+			{ SMRoleType.NTF_LIEUTENANT, "ninetailedfox" },
+			{ SMRoleType.NTF_SCIENTIST, "ninetailedfox" },
+			{ SMRoleType.SCIENTIST, "scientist" },
 		};
 	}
 }

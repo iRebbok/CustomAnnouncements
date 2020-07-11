@@ -1,15 +1,13 @@
-﻿using System;
-using System.IO;
-using Smod2;
+﻿using Smod2;
 using Smod2.Commands;
-using Smod2.API;
+using System;
 
 namespace CustomAnnouncements
 {
 	class RoundEndCommand : ICommandHandler
 	{
-		private Plugin plugin;
-		private Announcement an;
+		private readonly Plugin plugin;
+		private readonly Announcement an;
 
 		public RoundEndCommand(Plugin plugin)
 		{
@@ -35,18 +33,18 @@ namespace CustomAnnouncements
 
 			if (args.Length > 0)
 			{
-				if (args[0].ToLower() == "set")
+				if (string.Equals(args[0], "set", StringComparison.OrdinalIgnoreCase))
 				{
 					if (args.Length > 1)
 					{
 						return an.SetAnnouncement(CustomAnnouncements.StringArrayToString(args, 1), "Round end announcement set.");
 					}
 				}
-				else if (args[0].ToLower() == "view")
+				else if (string.Equals(args[0], "view", StringComparison.OrdinalIgnoreCase))
 				{
 					return an.ViewAnnouncement("Error: announcement has not been set.");
 				}
-				else if (args[0].ToLower() == "clear")
+				else if (string.Equals(args[0], "clear", StringComparison.OrdinalIgnoreCase))
 				{
 					return an.ClearAnnouncement("Round end announcement cleared.");
 				}
